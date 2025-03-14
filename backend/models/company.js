@@ -7,6 +7,7 @@ const companySchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   pharmacies: [{ type: mongoose.ObjectId, ref: 'Pharmacy', required: true}],
+  notifications: [{ type: String }],
 });
 
 companySchema.set('toJSON', {
