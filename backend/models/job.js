@@ -7,6 +7,7 @@ const jobSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   owner: { type: mongoose.ObjectId, ref: 'Company', required: true },
   bookedBy: { type: mongoose.ObjectId, ref: 'Pharmacist', default: null },
+  previousBookedBy: { type: mongoose.ObjectId, ref: 'Pharmacist', default: null },
 });
 
 jobSchema.set('toJSON', {
