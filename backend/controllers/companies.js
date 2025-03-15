@@ -1,8 +1,10 @@
-import Company from '../models/company';
+import Company from '../models/company.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 // Company Registration
+// Method: Post
+// Path: /company-register
 export const companyRegister = async (req, res) => {
   try {
     const newCompany = await Company.create(req.body);
@@ -14,6 +16,8 @@ export const companyRegister = async (req, res) => {
 };
 
 // Company Login
+// Method: Post
+// Path: /company-login
 export const companyLogin = async (req, res) => {
   try {
     const companyLogin = await Company.findOne({ username: req.body.email });
@@ -29,15 +33,40 @@ export const companyLogin = async (req, res) => {
   }
 };
 
+// All Companies
+// Method: Get
+// Path: /companies
+export const getAllCompanies = async (req, res) => {
+  const companies = await Company.find();
+  return res.json(companies);
+};
+
 // Company Profile
 // Method: Get
 // Path: /companies/:companyId
 export const companyProfile = async (req, res) => {
   try {
-    const companyProfile = await Company.findById(req.params.companyId);
+    const companyProfile = await Company.findById(req.currentCompany._id);
     return res.status(200).json(companyProfile);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
+  }
+};
+
+//Get company notifications
+// Method: Get
+// Path: /companies/:companyId/notifications
+export const companyNotifications = async (req, res) => {
+  const { companyId } = req.params;
+  try {
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ error: 'Company not found.' });
+    }
+    return res.status(200).json(company.notifications);
+  } catch (error) {
+    console.error('Error fetching company notifications.', error);
+    return res.status(500).json({ error: 'Error fetching company notifications.' });
   }
 };
