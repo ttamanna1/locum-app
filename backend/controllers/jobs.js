@@ -64,7 +64,7 @@ export const getSingleCompanyJob = async (req, res) => {
 
 // Create
 // Method: Post
-// Path: /companies/:companyId/jobs
+// Path: /companies/:companyId/jobs and /jobs
 export const createJob = async (req, res) => {
   try {
     req.body.owner = req.currentCompany._id;
@@ -78,7 +78,7 @@ export const createJob = async (req, res) => {
 
 // Update
 // Method: Put
-// Path: /companies/:companyId/jobs/:jobId
+// Path: /companies/:companyId/jobs/:jobId and /jobs/:jobId
 export const updateJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -98,13 +98,13 @@ export const updateJob = async (req, res) => {
 
 // Delete 
 // Method: Delete
-// Path: /companies/:companyId/jobs/:jobId
+// Path: /companies/:companyId/jobs/:jobId and /jobs/:jobId
 export const deleteJob = async (req, res) => {
   try {
     const { jobId } = req.params;
     const jobToDelete = await Job.findByIdAndDelete({ _id: jobId, owner: req.currentCompany._id });
     if (!jobToDelete) {
-      return res.status(400).json({ error: 'shift not found.' });
+      return res.status(400).json({ error: 'Shift not found.' });
     }
     return res.sendStatus(204);
   } catch (error) {
