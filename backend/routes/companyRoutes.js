@@ -1,8 +1,6 @@
 import express from 'express';
 import { 
   companyNotifications, 
-  companyRegister, 
-  companyLogin, 
   getAllCompanies, 
   companyProfile 
 } from '../controllers/companies.js';
@@ -13,35 +11,30 @@ import {
   getAllCompanyJobs, 
   getBookedJobsForCompany, 
   getSingleCompanyJob, 
-  updateJob } from '../controllers/jobs.js';
+  updateJob 
+} from '../controllers/jobs.js';
 
 const router = express.Router();
 
-router.route('/company-register')
-  .post(companyRegister);
-
-router.route('/company-login')
-  .post(companyLogin);
-
-router.route('/companies')
+router.route('/')
   .get(getAllCompanies);
 
-router.route('/companies/:companyId')
+router.route('/:companyId')
   .get(secureCompanyRoute, companyProfile);
 
-router.route('/companies/:companyId/notifications')
+router.route('/:companyId/notifications')
   .get(secureCompanyRoute, companyNotifications);
 
-router.route('/companies/:companyId/jobs')
+router.route('/:companyId/jobs')
   .get(getAllCompanyJobs)
   .post(secureCompanyRoute, createJob);
 
-router.route('/companies/:companyId/jobs/:jobId')
+router.route('/:companyId/jobs/:jobId')
   .get(getSingleCompanyJob)
   .put(secureCompanyRoute, updateJob)
   .delete(secureCompanyRoute, deleteJob);
 
-router.route('/companies/:companyId/jobs/booked')
+router.route('/:companyId/jobs/booked')
   .get(secureCompanyRoute, getBookedJobsForCompany);
 
 export default router;
