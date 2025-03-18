@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import Company from '../models/company.js';
 import Pharmacist from '../models/pharmacist.js';
 
-export default async function securePharmacistRoute(req, res, next) {
+export async function securePharmacistRoute(req, res, next) {
   try {
     if (!req.headers.authorization) throw new Error('Missing Headers');
     const token = req.headers.authorization.replace('Bearer ', '');
@@ -17,7 +17,7 @@ export default async function securePharmacistRoute(req, res, next) {
   }
 };
 
-export default async function secureCompanyRoute(req, res, next) {
+export async function secureCompanyRoute(req, res, next) {
   try {
     if (!req.headers.authorization) throw new Error('Missing Headers');
     const token = req.headers.authorization.replace('Bearer ', '');
