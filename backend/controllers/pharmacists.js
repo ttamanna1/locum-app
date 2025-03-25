@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 export const pharmacistRegister = async (req, res) => {
   try {
     const newPharmacist = await Pharmacist.create(req.body);
-    return res.status(201).json({ message: `Welcome ${newPharmacist.username}` });
+    return res.status(201).json({ message: `Welcome ${newPharmacist.firstName}` });
   } catch (error) {
     console.log(error);
     return res.status(400).json(error);
@@ -20,12 +20,12 @@ export const pharmacistRegister = async (req, res) => {
 // Path: /pharmacist-login
 export const pharmacistLogin = async (req, res) => {
   try {
-    const pharmacistLogin = await Pharmacist.findOne({ username: req.body.email });
+    const pharmacistLogin = await Pharmacist.findOne({ email: req.body.email });
     if (!pharmacistLogin || !bcrypt.compareSync(req.body.password, pharmacistLogin.password)) {
       throw new Error(!pharmacistLogin ? 'Email not found' : 'Password incorrect');
     }
     const token = jwt.sign({ sub: pharmacistLogin._id }, process.env.JWT_SECRET, { expiresIn: '30d'});
-    return res.status(202).json({ message: `Welcome back ${pharmacistLogin.username}`, token });
+    return res.status(202).json({ message: `Welcome back ${pharmacistLogin.firstName}`, token });
   } catch (error) {
     console.log(error);
     return res.status(401).json({ message: 'Invalid credentials' });
