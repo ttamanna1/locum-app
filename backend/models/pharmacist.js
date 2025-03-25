@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const pharmacistSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true, maxlength: 30 },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   GPhCNumber: { type: Number, required: true, unique: true },
@@ -28,11 +29,6 @@ pharmacistSchema
 pharmacistSchema.pre('validate', async function(next){
   if(this.isModified('password') && this._password !== this.passwordConfirmation){
     this.invalidate('passwordConfirmation', 'Passwords do not match');
-  };
-
-  const existingUsername = await this.constructor.findOne({ username: this.username })
-  if (existingUsername && existingUsername._id.toString() !== this._id.toString()){
-    this.invalidate('username', 'Username already exists');
   };
 
   const existingEmail = await this.constructor.findOne({ email: this.email })
