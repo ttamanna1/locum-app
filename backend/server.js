@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import 'dotenv/config';
 import router from './routes/allRoutes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
@@ -16,6 +17,9 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api', router);
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Sync database and start server
 async function startServer() {
