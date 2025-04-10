@@ -36,6 +36,9 @@ export const getAllCompanyJobs = async (req, res, next) => {
   const { companyId } = req.params;
   try {
     const jobs = await Job.find({ owner: companyId, bookedBy: null });
+    if (jobs.length === 0) {
+      return next({ status: 404, message: 'No shifts.' });
+    }
     return res.json(jobs);
   } catch (error) {
     next({ status: 500, message: 'Error fetching shifts.' });
@@ -77,13 +80,13 @@ export const createJob = async (req, res, next) => {
 export const updateJob = async (req, res, next) => {
   try {
     const { jobId } = req.params;
+    const jobToUpdate = await Job.findByIdAndUpdate(jobId, req.body, { new: true });
     if (!jobToUpdate) {
       return next({ status: 404, message: 'Shift not found.' });
     }
     if (!jobToUpdate.owner.equals(req.currentCompany._id)) {
       return next({ status: 401, message: 'Unauthorized' });
     }
-    const jobToUpdate = await Job.findByIdAndUpdate(jobId, req.body, { new: true });
     return res.json(jobToUpdate);
   } catch (error) {
     next({ status: 500, message: 'Error updating shift.' });
@@ -96,7 +99,7 @@ export const updateJob = async (req, res, next) => {
 export const deleteJob = async (req, res, next) => {
   try {
     const { jobId } = req.params;
-    const jobToDelete = await Job.findByIdAndDelete({ _id: jobId, owner: req.currentCompany._id });
+    const jobToDelete = await Job.findOneAndDelete({ _id: jobId, owner: req.currentCompany._id });
     if (!jobToDelete) {
       return next({ status: 400, message: 'Shift not found.' });
     }
@@ -113,6 +116,9 @@ export const getBookedJobsForCompany = async (req, res, next) => {
   const { companyId } = req.params;
   try {
     const jobs = await Job.find({ owner: companyId, bookedBy: { $ne: null } }); // $ne: not equal to null
+    if (jobs.length === 0) {
+      return next({ status: 404, message: 'No shifts booked.' });
+    };
     return res.json(jobs);
   } catch (error) {
     next({ status: 500, message: 'Error fetching shifts.' });
@@ -132,7 +138,7 @@ export const bookJob = async (req, res, next) => {
     if (job.bookedBy) {
       return next({ status: 400, message: 'Shift already booked.' });
     }
-    job.bookedBy = req.pharmacist._id;
+    job.bookedBy = req.currentPharmacist._id;
     await job.save();
     return res.json(job);
   } catch (error) {
@@ -146,6 +152,9 @@ export const bookJob = async (req, res, next) => {
 export const getPharmacistJobs = async (req, res, next) => {
   try {
     const jobs = await Job.find({ bookedBy: req.currentPharmacist._id });
+    if (!jobs || jobs.length === 0) {
+      return next({ status: 404, message: 'No shifts booked.' });
+    };
     return res.json(jobs);
   } catch (error) {
     next({ status: 500, message: 'Error fetching shifts.' });
@@ -203,6 +212,9 @@ export const cancelJob = async (req, res, next) => {
 export const getCancelledJobs = async (req, res, next) => {
   try {
     const jobs = await Job.find({ previousBookedBy: req.currentPharmacist._id, bookedBy: null });
+    if (jobs.length === 0) {
+      return next({ status: 404, message: 'No shifts cancelled.' });
+    };
     return res.json(jobs);
   } catch (error) {
     next({ status: 500, message: 'Error fetching shifts.' });
